@@ -6,4 +6,3 @@ export const indexRouter = express.Router();
 indexRouter.use("/user", userRouter);
 
 indexRouter.use("/todo", todoRouter);
-

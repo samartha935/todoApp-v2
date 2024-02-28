@@ -1,8 +1,7 @@
 import mongoose from "mongoose";
+import { DATABASE_URL } from "../config/config";
 
-mongoose.connect(
-  "mongodb+srv://samarthudupa5:PgV5cFFTGt4M3ssH@cluster0.qiavfvk.mongodb.net/TodoApp"
-);
+mongoose.connect(DATABASE_URL);
 
 const userSchema = new mongoose.Schema({
   username: String,
