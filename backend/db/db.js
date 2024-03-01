@@ -10,9 +10,17 @@ const userSchema = new mongoose.Schema({
 });
 
 const todoSchema = new mongoose.Schema({
-  title: String,
-  description: String,
-  taskCompleted: Boolean,
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
+  todos: [
+    {
+      title: String,
+      description: String,
+      taskCompleted: Boolean,
+    },
+  ],
 });
 
 export const User = mongoose.model("user", userSchema);

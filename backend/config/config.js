@@ -1,11 +1,10 @@
 // require('dotenv').config();
 
-
-import dotenv from 'dotenv'; 
+import dotenv from "dotenv";
 dotenv.config();
 
-export const PORT = process.env.PORT
+export const PORT = process.env.PORT;
 
-export const DATABASE_URL = process.env.DATABASE_URL
+export const DATABASE_URL = process.env.DATABASE_URL;
 
-export const JWT_SECRATE_KEY = process.env.JWT_SECRATE_KEY
+export const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;

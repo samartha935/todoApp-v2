@@ -2,8 +2,9 @@ import express from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { signinSchema, signupSchema } from "../zod/zodSchema.js";
-import { User } from "../db/db.js";
-import { JWT_SECRATE_KEY } from "../config/config.js";
+import { Todo, User } from "../db/db.js";
+import { JWT_SECRET_KEY } from "../config/config.js";
+import { authMiddleware } from "../middlewares/auth.js";
 
 export const userRouter = express.Router();
 
@@ -30,13 +31,24 @@ userRouter.post("/signup", async (req, res) => {
     payload.password = await bcrypt.hash(payload.password, salt);
 
     const accountCreate = await User.create(payload);
-    if (!accountCreate) {
+    const todoDocumentCreate = await Todo.create({
+      userId: accountCreate._id,
+      todos: [],
+    });
+    if (!(accountCreate && todoDocumentCreate)) {
       return res.json({
         msg: "There was error in creating account.",
       });
     }
 
-    const token = jwt.sign({ payload }, JWT_SECRATE_KEY);
+    const token = jwt.sign(
+      {
+        username: accountCreate.username,
+        email: accountCreate.email,
+        documentId: accountCreate._id,
+      },
+      JWT_SECRET_KEY
+    );
 
     return res.json({
       msg: "Account has been created.",
@@ -45,23 +57,6 @@ userRouter.post("/signup", async (req, res) => {
   } catch (err) {
     console.log(err);
   }
-});
-
-userRouter.delete("/signup", async (req, res) => {
-  const token = req.headers.authorization.split(" ")[1];
-
-  const userInfo = jwt.decode(token, JWT_SECRATE_KEY).user;
-
-  const deleteAccount = await User.deleteOne(userInfo);
-  if (!deleteAccount.acknowledged || !deleteAccount.deletedCount) {
-    return res.json({
-      msg: "Failed to delete account.",
-    });
-  }
-
-  return res.json({
-    msg: "Account deleted sucessfully.",
-  });
 });
 
 userRouter.get("/signin", async (req, res) => {
@@ -88,7 +83,14 @@ userRouter.get("/signin", async (req, res) => {
       });
     }
 
-    const token = jwt.sign({ user }, JWT_SECRATE_KEY);
+    const token = jwt.sign(
+      {
+        username: user.username,
+        email: user.email,
+        documentId: user._id,
+      },
+      JWT_SECRET_KEY
+    );
 
     return res.json({
       msg: "You have logged in to the account.",
@@ -97,4 +99,43 @@ userRouter.get("/signin", async (req, res) => {
   } catch (err) {
     console.log(err);
   }
+});
+
+userRouter.delete("/signup", authMiddleware, async (req, res) => {
+  try {
+    const deleteAccount = await User.deleteOne({
+      username: req.username,
+    });
+    if (!deleteAccount.acknowledged || !deleteAccount.deletedCount) {
+      return res.json({
+        msg: "Failed to delete account.",
+      });
+    }
+
+    return res.json({
+      msg: "Account deleted sucessfully.",
+    });
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+userRouter.get("/info", authMiddleware, async (req, res) => {
+  try {
+    const userInfo = await User.findOne({ _id: req.documentId });
+    if (!userInfo) {
+      return res.json({
+        msg: "User info could not be found.",
+      });
+    }
+    return res.json({
+      userInfo,
+    });
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+userRouter.put("/update", async (req, res) => {
+  //pdate the user info
 });
