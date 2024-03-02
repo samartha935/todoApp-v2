@@ -136,6 +136,38 @@ userRouter.get("/info", authMiddleware, async (req, res) => {
   }
 });
 
-userRouter.put("/update", async (req, res) => {
-  //pdate the user info
+userRouter.put("/update", authMiddleware, async (req, res) => {
+  try {
+    const info = req.body;
+    const parsedInfo = signupSchema.safeParse(info);
+    if (!parsedInfo.success) {
+      return res.json({
+        msg: "You have entered wrong inputs.",
+      });
+    }
+
+    const salt = await bcrypt.genSalt();
+    info.password = await bcrypt.hash(info.password, salt);
+
+    const update = await User.findOneAndUpdate(
+      { _id: req.documentId },
+      {
+        $set: info,
+      },
+      { new: true }
+    );
+
+    if (!update) {
+      return res.json({
+        msg: "Couldnt find your account and update your information.",
+      });
+    }
+
+    return res.json({
+      msg: "Your information has been updated",
+      newInfo: update,
+    });
+  } catch (err) {
+    console.log(err);
+  }
 });

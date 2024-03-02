@@ -55,6 +55,10 @@ todoRouter.post("/add", async (req, res) => {
   }
 });
 
-todoRouter.put("/update", async (req, res) => {});
+todoRouter.put("/update", async (req, res) => {
 
-todoRouter.delete("/delete", async (req, res) => {});
+});
+
+todoRouter.delete("/delete", async (req, res) => {
+  
+});
