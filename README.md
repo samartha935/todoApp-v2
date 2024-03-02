@@ -1,6 +1,7 @@
 # Fullstack ToDo Application
 
-27-02-2024
+27-02-2024 - Project started.
+02-03-2024 - Backend Complete.
 
 {
 "username": "hiiii",
