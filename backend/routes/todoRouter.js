@@ -54,7 +54,28 @@ todoRouter.post("/add", async (req, res) => {
   }
 });
 
-todoRouter.put("/update", async (req, res) => {});
+todoRouter.put("/update", async (req, res) => {
+  const body = req.body;
+
+  const deleteTodo = await Todo.findOneAndUpdate(
+    { _id: body.todoDocumentId, "todos._id": body.todoId },
+    {
+      $set: {
+        "todos.$": body.updatedTodo,
+      },
+    }
+  );
+
+  if (!deleteTodo) {
+    return res.json({
+      msg: "There was an error while updating todo. Try again.",
+    });
+  }
+
+  return res.json({
+    msg: "Todo successfully updated.",
+  });
+});
 
 todoRouter.delete("/delete", async (req, res) => {
   const body = req.body;
