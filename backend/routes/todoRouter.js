@@ -1,5 +1,4 @@
 import express from "express";
-import mongoose from "mongoose";
 import { todoSchema } from "../zod/zodSchema.js";
 import { Todo } from "../db/db.js";
 import { authMiddleware } from "../middlewares/auth.js";
@@ -18,6 +17,7 @@ todoRouter.get("/bulk", async (req, res) => {
     }
 
     return res.json({
+      _id: todoList._id,
       todoList: todoList.todos,
     });
   } catch (err) {
@@ -41,7 +41,6 @@ todoRouter.post("/add", async (req, res) => {
       { new: true }
     );
     if (!createTodo) {
-      console.log(createTodo);
       return res.json({
         msg: "Couldnt add the new todo.",
       });
@@ -55,10 +54,29 @@ todoRouter.post("/add", async (req, res) => {
   }
 });
 
-todoRouter.put("/update", async (req, res) => {
-
-});
+todoRouter.put("/update", async (req, res) => {});
 
 todoRouter.delete("/delete", async (req, res) => {
-  
+  const body = req.body;
+
+  const deleteTodo = await Todo.findOneAndUpdate(
+    { _id: body.todoDocumentId },
+    {
+      $pull: {
+        todos: {
+          _id: body.todoId,
+        },
+      },
+    }
+  );
+
+  if (!deleteTodo) {
+    return res.json({
+      msg: "There was an error while deleting todo. Try again.",
+    });
+  }
+
+  return res.json({
+    msg: "Todo successfully deleted.",
+  });
 });
