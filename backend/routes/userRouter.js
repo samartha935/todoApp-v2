@@ -59,7 +59,7 @@ userRouter.post("/signup", async (req, res) => {
   }
 });
 
-userRouter.get("/signin", async (req, res) => {
+userRouter.post("/signin", async (req, res) => {
   try {
     const payload = req.body;
     const parsedPayload = signinSchema.safeParse(payload);
@@ -106,7 +106,13 @@ userRouter.delete("/signup", authMiddleware, async (req, res) => {
     const deleteAccount = await User.deleteOne({
       username: req.username,
     });
-    if (!deleteAccount.acknowledged || !deleteAccount.deletedCount) {
+    const deleteTodoList = await Todo.deleteOne({
+      userId: req.documentId,
+    });
+    if (
+      (!deleteAccount.acknowledged || !deleteAccount.deletedCount) &&
+      (!deleteTodoList.acknowledged || !deleteTodoList.deletedCount)
+    ) {
       return res.json({
         msg: "Failed to delete account.",
       });

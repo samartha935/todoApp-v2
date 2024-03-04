@@ -8,6 +8,7 @@ export function InputBox(props) {
           type="text"
           className="border border-black rounded-lg"
           placeholder={props.placeholder}
+          onChange={props.onChange}
         />
       </div>
     </>
