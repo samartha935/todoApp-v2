@@ -50,8 +50,11 @@ export function Signup() {
                 }
               );
 
-              localStorage.setItem("authorization", "Bearer " + response.data.token);
-
+              localStorage.setItem(
+                "authorization",
+                "Bearer " + response.data.token
+              );
+              // if(response.)
               navigate("/dashboard");
             }}
           />
