@@ -57,7 +57,7 @@ todoRouter.post("/add", async (req, res) => {
 todoRouter.put("/update", async (req, res) => {
   const body = req.body;
 
-  const deleteTodo = await Todo.findOneAndUpdate(
+  const updateTodo = await Todo.findOneAndUpdate(
     { _id: body.todoDocumentId, "todos._id": body.todoId },
     {
       $set: {
@@ -66,7 +66,7 @@ todoRouter.put("/update", async (req, res) => {
     }
   );
 
-  if (!deleteTodo) {
+  if (!updateTodo) {
     return res.json({
       msg: "There was an error while updating todo. Try again.",
     });
@@ -80,7 +80,7 @@ todoRouter.put("/update", async (req, res) => {
 todoRouter.delete("/delete", async (req, res) => {
   const body = req.body;
 
-  const deleteTodo = await Todo.findOneAndUpdate(
+  const updateTodo = await Todo.findOneAndUpdate(
     { _id: body.todoDocumentId },
     {
       $pull: {
@@ -91,7 +91,7 @@ todoRouter.delete("/delete", async (req, res) => {
     }
   );
 
-  if (!deleteTodo) {
+  if (!updateTodo) {
     return res.json({
       msg: "There was an error while deleting todo. Try again.",
     });

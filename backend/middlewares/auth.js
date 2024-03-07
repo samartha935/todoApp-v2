@@ -7,7 +7,6 @@ export function authMiddleware(req, res, next) {
   if (!(authHeader && authHeader.startsWith("Bearer "))) {
     return res.status(403).json({
       msg: "You dont have the authorization.",
-      err : authHeader
     });
   }
 
