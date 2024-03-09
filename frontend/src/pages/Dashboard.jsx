@@ -9,6 +9,7 @@ export function Dashboard() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [data, setData] = useState();
+  const [originalEditData, setOriginalEditData] = useState();
 
   useEffect(() => {
     async function fetchTodoList() {
@@ -29,7 +30,7 @@ export function Dashboard() {
     }
     fetchTodoList();
 
-    const intervalId = setInterval(fetchTodoList, 5000);
+    const intervalId = setInterval(fetchTodoList, 2000);
 
     return () => clearInterval(intervalId);
   }, []);
@@ -83,31 +84,58 @@ export function Dashboard() {
           {data ? (
             data.todoList.map((todo) => {
               return (
-                <div className="bg-red border border-black mt-5 mx-10 p-10">
+                <div
+                  className={`bg-red-300 border border-black mt-5 mx-10 p-10 `}
+                  key={todo._id}
+                >
                   <div className="font-bold text-xl">{todo.title}</div>
                   <div className="text-sm">{todo.description}</div>
                   <SubmitButton
-                    buttonText="Done"
+                    buttonText={
+                      todo.taskCompleted ? "Task Completed" : "Mark as Done"
+                    }
                     onClick={async () => {
-                      const response = await axios.put(
-                        "http://localhost:3000/api/v1/todo/update",
-                        {
-                          todoDocumentId: data._id,
-                          todoId: todo._id,
-                          updatedTodo: {
-                            title: todo.title,
-                            description: todo.description,
-                            taskCompleted: true,
+                      if (!todo.taskCompleted) {
+                        const response = await axios.put(
+                          "http://localhost:3000/api/v1/todo/update",
+                          {
+                            todoDocumentId: data._id,
+                            todoId: todo._id,
+                            updatedTodo: {
+                              title: todo.title,
+                              description: todo.description,
+                              taskCompleted: true,
+                            },
                           },
-                        },
-                        {
-                          headers: {
-                            "Content-Type": "application/json",
-                            authorization:
-                              localStorage.getItem("authorization"),
+                          {
+                            headers: {
+                              "Content-Type": "application/json",
+                              authorization:
+                                localStorage.getItem("authorization"),
+                            },
+                          }
+                        );
+                      } else {
+                        const response = await axios.put(
+                          "http://localhost:3000/api/v1/todo/update",
+                          {
+                            todoDocumentId: data._id,
+                            todoId: todo._id,
+                            updatedTodo: {
+                              title: todo.title,
+                              description: todo.description,
+                              taskCompleted: false,
+                            },
                           },
-                        }
-                      );
+                          {
+                            headers: {
+                              "Content-Type": "application/json",
+                              authorization:
+                                localStorage.getItem("authorization"),
+                            },
+                          }
+                        );
+                      }
                     }}
                   />
                   <SubmitButton buttonText="Edit" onClick={() => {}} />
@@ -119,13 +147,14 @@ export function Dashboard() {
                         {
                           headers: {
                             "Content-Type": "application/json",
-                            authorization: localStorage.getItem("authorization"),
+                            authorization:
+                              localStorage.getItem("authorization"),
                           },
-                          data : {
+                          data: {
                             todoDocumentId: data._id,
                             todoId: todo._id,
                           },
-                        },
+                        }
                       );
                     }}
                   />

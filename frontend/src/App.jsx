@@ -5,6 +5,7 @@ import { Signup } from './pages/Signup'
 import { Signin } from "./pages/Signin"
 import { Dashboard } from "./pages/Dashboard"
 import { UserAccount } from "./pages/UserAccount"
+import { RecoilRoot } from "recoil"
 
 function App() {
 
