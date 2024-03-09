@@ -9,7 +9,6 @@ export function Dashboard() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [data, setData] = useState();
-  const [originalEditData, setOriginalEditData] = useState();
 
   useEffect(() => {
     async function fetchTodoList() {
@@ -85,7 +84,7 @@ export function Dashboard() {
             data.todoList.map((todo) => {
               return (
                 <div
-                  className={`bg-red-300 border border-black mt-5 mx-10 p-10 `}
+                  className={ `${ todo.taskCompleted? "bg-green-200" : "bg-red-200" } border border-black mt-5 mx-10 p-10 `}
                   key={todo._id}
                 >
                   <div className="font-bold text-xl">{todo.title}</div>
